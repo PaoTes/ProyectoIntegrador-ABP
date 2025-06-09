@@ -2,7 +2,7 @@ import React from "react";
 
 const ProductList = ({ product }) => {
 return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 bg-white">
+    <div className=" product-list border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 bg-white">
     
     <div className="h-48 bg-gray-100 flex items-center justify-center">
         <img
@@ -14,7 +14,7 @@ return (
 
     
     <div className="p-4">
-        <h3 className="text-lg font-bold text-gray-800 truncate">
+        <h3 className=" product-title text-lg font-bold text-gray-800 truncate">
         {product.title}
         </h3>
                 <div className="mt-3 flex justify-between items-center">
@@ -22,7 +22,7 @@ return (
             {product.category}
         </span>
         </div>
-        <p className="text-green-800 font-bold mt-2">${product.price}</p>
+        <p className="product-price text-green-800 font-bold mt-2">${product.price}</p>
         <p className="text-gray-500 text-sm mt-1 line-clamp-2">
         {product.description}
         </p>
