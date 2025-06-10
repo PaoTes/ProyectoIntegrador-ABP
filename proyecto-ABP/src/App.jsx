@@ -70,6 +70,35 @@ function App() {
   : 0;
 // El producto mejor valorado
     const maxRatingObj = filteredProducts.reduce((max, p) => (p.rating > max.rating ? p : max), filteredProducts[0]);
+
+ // precio promedio
+  const promedioPrecio = filteredProducts.length
+  ? (filteredProducts.reduce((sum, p) => sum + p.price, 0) / filteredProducts.length).toFixed(2)
+  : 0;
+ //cantidad de productos
+  const cantidadPorCategoria = selectedCategory === "all"
+  ? filteredProducts.length
+  : filteredProducts.filter(p => p.category === selectedCategory).length;
+// Cantidad de productos con stock > 50
+  const cantidadStockMayor50 = filteredProducts.filter(p => p.stock > 50).length;
+
+// Cantidad de productos con rating > 4.5
+  const cantidadRatingMayor45 = filteredProducts.filter(p => p.rating > 4.5).length;
+  const promedioRating = filteredProducts.length
+  ? (filteredProducts.reduce((sum, p) => sum + p.rating, 0) / filteredProducts.length).toFixed(2)
+  : 0;
+ // precio promedio categoria
+ const promedioPrecioCategoriaFiltrada =
+  selectedCategory !== "all"
+    ? (
+        products
+          .filter((p) => p.category === selectedCategory)
+          .reduce((sum, p) => sum + p.price, 0) /
+        products.filter((p) => p.category === selectedCategory).length || 0
+      ).toFixed(2)
+    : "-";
+
+
     // Funcion Modo Oscuro
     const toggleDarkMode = ()=>{
       setDarkMode(!darkMode);
@@ -147,6 +176,13 @@ function App() {
             promedioDescuento={promedioDescuento}
             maxRatingTitle={maxRatingObj.title}
             maxRatingValue={maxRatingObj.rating}
+            promedioPrecio={promedioPrecio}
+            cantidadPorCategoria={cantidadPorCategoria}
+            cantidadStockMayor50={cantidadStockMayor50}
+            cantidadRatingMayor45={cantidadRatingMayor45}
+            promedioPrecioCategoriaFiltrada={promedioPrecioCategoriaFiltrada}
+            promedioRating={promedioRating}
+
             /> )}
             
 
