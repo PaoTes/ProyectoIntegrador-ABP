@@ -146,7 +146,7 @@ function App() {
           </div>
           </div>
         </div>
-          <div className="stats-panel w-full md:w-1/3 bg-white p-4 ">
+          <div className="stats-panel w-full md:w-1/3 bg-white p-4 overflow-auto ">
         <h2 className="text-xl font-bold mb-4">Panel de Estadísticas</h2>
        
 
@@ -166,6 +166,9 @@ function App() {
 
              {/* Renderización condicional */}
             {show && (  <StatsPanel
+            filteredProducts={filteredProducts}
+            categories={categories}
+            products={products}
             total={totalProducts}
             totalPrice={totalPrice}
             max={maxProductObj.price}
