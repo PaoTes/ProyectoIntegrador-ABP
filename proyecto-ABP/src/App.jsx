@@ -4,7 +4,7 @@ import "./App.css";
 import ProductList from "./components/ProductList"; // Importamos el componente
 import StatsPanel from "./components/StatsPanel";
 import SearchBar from "./components/SearchBar";
-
+import SortSelect from "./components/SortSelect";
 
 function App() {
   // 1. Estado para almacenar los productos
@@ -15,17 +15,31 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   //Referencias
   const containerRef = useRef(null);
+  //estados de categorias
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [categories, setCategories] = useState([]);
+  //ordenamiento de productos
+  const [sortOption, setSortOption] = useState(''); // Nuevo estado para ordenamiento
+  
+
+  
+
+
 
   // 2. useEffect para hacer la petición al montar el componente
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("https://dummyjson.com/products?limit=100");
-        setProducts(response.data.products);
+         const [productsRes, categoriesRes] = await Promise.all([
+          axios.get("https://dummyjson.com/products?limit=100"),
+          axios.get("https://dummyjson.com/products/category-list")
+        ]);
+        setProducts(productsRes.data.products);
+        setCategories(categoriesRes.data);
       } catch (error) {
         console.error("Error al cargar productos:", error);
       } finally {
-        setLoading(false); // Quitamos el estado de carga (éxito o error)
+        setLoading(false);
       }
     };
 
@@ -33,8 +47,11 @@ function App() {
   }, []); // Se ejecuta solo una vez al inicio
 
     //Filtramos los productos obtenidos de la API
-    const filteredProducts = products.filter((p) => p.title.toLowerCase().includes(search.toLowerCase()));
-
+  let filteredProducts = products.filter(
+    (p) =>
+      p.title.toLowerCase().includes(search.toLowerCase()) &&
+      (selectedCategory === "all" || p.category === selectedCategory)
+  );
     //Cantidad de productos en pantalla
     const totalProducts = filteredProducts.length;
 
@@ -59,6 +76,17 @@ function App() {
           containerRef.current.classList.toggle("dark-mode");
    
     };
+
+    //ordenamiento
+    if (sortOption === "price-asc") {
+      filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
+    } else if (sortOption === "price-desc") {
+      filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
+    } else if (sortOption === "rating-asc") {
+      filteredProducts = [...filteredProducts].sort((a, b) => a.rating - b.rating);
+    } else if (sortOption === "rating-desc") {
+      filteredProducts = [...filteredProducts].sort((a, b) => b.rating - a.rating);
+    }
 
   return (
     <div ref={containerRef} className="min-h-screen bg-green-50 p-6">
@@ -94,23 +122,35 @@ function App() {
        
 
         <div className="pt-1">
-        <SearchBar search={search} setSearch={setSearch} />
-  <button className="bg-pink-700 rounded p-1 pl-3 pr-3
-    m-0 text-white" onClick={() => setShow(!show)}>{show ? "Ocultar" : "Mostrar"}</button>
-  
-  {show && (  <StatsPanel
-    total={totalProducts}
-    totalPrice={totalPrice}
-    max={maxProductObj.price}
-    maxName={maxProductObj.title}
-    min={minProductObj.price}
-    minName={minProductObj.title}
-    mayor20={mayor20}
-    promedioDescuento={promedioDescuento}
-    maxRatingTitle={maxRatingObj.title}
-    maxRatingValue={maxRatingObj.rating}
-  /> )}
-  {filteredProducts.length == 0 && <div>No se encontraron productos</div>}
+        
+           
+            <button className="bg-pink-700 rounded p-1 pl-3 pr-3
+             m-0 text-white" onClick={() => setShow(!show)}>{show ? "Ocultar" : "Mostrar"}</button>
+             <SearchBar
+          search={search}
+          setSearch={setSearch}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+        <SortSelect sortOption={sortOption} setSortOption={setSortOption} />
+
+             {/* Renderización condicional */}
+            {show && (  <StatsPanel
+            total={totalProducts}
+            totalPrice={totalPrice}
+            max={maxProductObj.price}
+            maxName={maxProductObj.title}
+            min={minProductObj.price}
+            minName={minProductObj.title}
+            mayor20={mayor20}
+            promedioDescuento={promedioDescuento}
+            maxRatingTitle={maxRatingObj.title}
+            maxRatingValue={maxRatingObj.rating}
+            /> )}
+            
+
+            {filteredProducts.length == 0 && <div>No se encontraron productos</div>}
       </div>  
 </div>
         </div>
